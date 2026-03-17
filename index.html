@@ -209,13 +209,7 @@ y+=rowHeight;
 
 doc.setFont("times","normal");
 
-// TOTAL CALCULATION
-let total = 0;
-let maxTotal = 0;
-let pass = true;
-
 function row(subject,full,marks){
-
 doc.rect(startX,y,col1,rowHeight);
 doc.rect(startX+col1,y,col2,rowHeight);
 doc.rect(startX+col1+col2,y,col3,rowHeight);
@@ -223,14 +217,6 @@ doc.rect(startX+col1+col2,y,col3,rowHeight);
 doc.text(subject,startX+5,y+7);
 doc.text(String(full),startX+col1+15,y+7);
 doc.text(String(marks),startX+col1+col2+15,y+7);
-
-total += Number(marks) || 0;
-maxTotal += (typeof full === "string") ? (full.includes("/") ? Number(full.split("/")[0]) : Number(full)) : full;
-
-// PASS CONDITION (min 33%)
-if(Number(marks) < ( (typeof full === "string") ? (Number(full.split("/")[0])*0.33) : full*0.33 )){
-pass = false;
-}
 
 y+=rowHeight;
 }
@@ -244,21 +230,9 @@ row("BIOLOGY",70,s["BIOLOGY(TH MAX-70)"]);
 row("PHYSICAL EDUCATION",70,s["PHYSICAL EDUCATION (TH MAX-70)"]);
 row("CS / IT","70/60",s["CS/IT (TH MAX-70/60)"]);
 
-y+=10;
-
-// RESULT
-let percentage = ((total/maxTotal)*100).toFixed(2);
-let result = pass ? "PASS" : "FAIL";
-
-doc.setFont("times","bold");
-
-doc.text("Total Marks : "+total+" / "+maxTotal,20,y); y+=7;
-doc.text("Percentage : "+percentage+" %",20,y); y+=7;
-doc.text("Result : "+result,20,y);
-
 y+=20;
 
-doc.setFont("times","normal");
+// SIGNATURES
 doc.text("Class Teacher",20,y);
 doc.text("Principal",pageWidth-20,y,{align:"right"});
 
