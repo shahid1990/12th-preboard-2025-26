@@ -216,36 +216,38 @@ doc.text("Class : "+s["Class"]+"-"+s["Sec."],20,y);
 
 y+=10;
 
-// TABLE
+// TABLE SETTINGS (IMPROVED)
 const startX = 20;
 const rowHeight = 10;
 
-const col1 = 80;
-const col2 = 40;
-const col3 = 40;
+const col1 = 95; // SUBJECT
+const col2 = 35; // FULL MARKS
+const col3 = 30; // MARKS
 
 doc.setFont("times","bold");
 
+// HEADER ROW
 doc.rect(startX,y,col1,rowHeight);
 doc.rect(startX+col1,y,col2,rowHeight);
 doc.rect(startX+col1+col2,y,col3,rowHeight);
 
 doc.text("SUBJECT", startX+5, y+7);
-doc.text("FULL MARKS", startX+col1+8, y+7);
-doc.text("MARKS", startX+col1+col2+12, y+7);
+doc.text("FULL MARKS", startX+col1 + col2/2, y+7, {align:"center"});
+doc.text("MARKS", startX+col1+col2 + col3/2, y+7, {align:"center"});
 
 y+=rowHeight;
 
 doc.setFont("times","normal");
 
+// ROW FUNCTION (ALIGNED)
 function row(subject,full,marks){
 doc.rect(startX,y,col1,rowHeight);
 doc.rect(startX+col1,y,col2,rowHeight);
 doc.rect(startX+col1+col2,y,col3,rowHeight);
 
 doc.text(subject,startX+5,y+7);
-doc.text(String(full),startX+col1+15,y+7);
-doc.text(String(marks),startX+col1+col2+15,y+7);
+doc.text(String(full), startX+col1 + col2/2, y+7, {align:"center"});
+doc.text(String(marks), startX+col1+col2 + col3/2, y+7, {align:"center"});
 
 y+=rowHeight;
 }
