@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -81,7 +80,6 @@ color:#eee;
 margin-top:20px;
 }
 </style>
-
 </head>
 
 <body>
@@ -118,7 +116,6 @@ Generate & Preview PDF
 </div>
 
 <script>
-
 const { jsPDF } = window.jspdf;
 
 let students = [];
@@ -128,9 +125,7 @@ fetch('data.json')
 .then(res=>res.json())
 .then(data=>students=data);
 
-
 function search(){
-
 let adm = document.getElementById("admno").value.trim();
 
 if(!adm){
@@ -141,12 +136,10 @@ return;
 let st = students.find(s=>String(s["Adm. No."]).trim()===adm);
 
 if(!st){
-
 status.innerHTML="<span style='color:red;'>Result Not Found</span>";
 preview.style.display="none";
 generateBtn.style.display="none";
 return;
-
 }
 
 currentStudent = st;
@@ -163,21 +156,15 @@ preview.innerHTML=`
 `;
 
 generateBtn.style.display="block";
-
 }
-
-
 
 function createPDF(){
 
 const s = currentStudent;
-
 const doc = new jsPDF("p","mm","a4");
-
 const pageWidth = doc.internal.pageSize.getWidth();
 
 let y = 20;
-
 
 doc.setFont("times","bold");
 doc.setFontSize(22);
@@ -190,7 +177,6 @@ doc.text("PRE-BOARD EXAM RESULT (2025-26)", pageWidth/2, y,{align:"center"});
 
 y+=15;
 
-
 doc.setFont("times","normal");
 
 doc.text("Student Name : "+s["STUDENT'S NAME"],20,y); y+=7;
@@ -201,14 +187,13 @@ doc.text("Class : "+s["Class"]+"-"+s["Sec."],20,y);
 
 y+=10;
 
-
+// TABLE
 const startX = 20;
 const rowHeight = 10;
 
 const col1 = 80;
 const col2 = 40;
 const col3 = 40;
-
 
 doc.setFont("times","bold");
 
@@ -224,6 +209,10 @@ y+=rowHeight;
 
 doc.setFont("times","normal");
 
+// TOTAL CALCULATION
+let total = 0;
+let maxTotal = 0;
+let pass = true;
 
 function row(subject,full,marks){
 
@@ -235,56 +224,59 @@ doc.text(subject,startX+5,y+7);
 doc.text(String(full),startX+col1+15,y+7);
 doc.text(String(marks),startX+col1+col2+15,y+7);
 
-y+=rowHeight;
+total += Number(marks) || 0;
+maxTotal += (typeof full === "string") ? (full.includes("/") ? Number(full.split("/")[0]) : Number(full)) : full;
 
+// PASS CONDITION (min 33%)
+if(Number(marks) < ( (typeof full === "string") ? (Number(full.split("/")[0])*0.33) : full*0.33 )){
+pass = false;
 }
 
+y+=rowHeight;
+}
 
+// SUBJECTS
 row("ENGLISH",80,s["ENGLISH (TH MAX-80 )"]);
 row("PHYSICS",70,s["PHYSICS (TH MAX-70)"]);
 row("CHEMISTRY",70,s["CHEMISTRY (TH MAX-70)"]);
 row("MATHS",80,s["MATHS (TH MAX-80)"]);
 row("BIOLOGY",70,s["BIOLOGY(TH MAX-70)"]);
 row("PHYSICAL EDUCATION",70,s["PHYSICAL EDUCATION (TH MAX-70)"]);
-row("CS / IT",70/60,s["CS/IT (TH MAX-70/60)"]);
+row("CS / IT","70/60",s["CS/IT (TH MAX-70/60)"]);
 
+y+=10;
+
+// RESULT
+let percentage = ((total/maxTotal)*100).toFixed(2);
+let result = pass ? "PASS" : "FAIL";
+
+doc.setFont("times","bold");
+
+doc.text("Total Marks : "+total+" / "+maxTotal,20,y); y+=7;
+doc.text("Percentage : "+percentage+" %",20,y); y+=7;
+doc.text("Result : "+result,20,y);
 
 y+=20;
 
+doc.setFont("times","normal");
 doc.text("Class Teacher",20,y);
 doc.text("Principal",pageWidth-20,y,{align:"right"});
 
-
 return doc;
-
 }
-
-
 
 function generatePDF(){
-
 const doc = createPDF();
-
 const blob = doc.output("blob");
-
 const url = URL.createObjectURL(blob);
-
 pdfFrame.src = url;
-
 pdfPreviewContainer.style.display="block";
-
 }
-
-
 
 function downloadPDF(){
-
 const doc = createPDF();
-
 doc.save(`${currentStudent["Adm. No."]}-${currentStudent["STUDENT'S NAME"]}.pdf`);
-
 }
-
 </script>
 
 </body>
